@@ -2,6 +2,17 @@
 
 Official Implementation of "Accel-GNN: High-Performance GPU Accelerator Design for Graph Neural Networks"
 
+Please cite our paper if you use the code ✔
+```
+@inproceedings{xi2023AccelGCN,
+  title={Accel-GCN: High-Performance GPU Accelerator Design for Graph Convolution Networks},
+  author={Xie, Xi and Peng, Hongwu and others},
+  booktitle={Proceedings of the 42st IEEE/ACM International Conference on Computer-Aided Design},
+  year={2023}
+}
+```
+
+
 ## Abstract
 This code contains a lightweight framework for benchmarking SPMM kernel designs.
 
