@@ -6,7 +6,7 @@ Please cite our paper if you use the code ✔
 ```
 @inproceedings{xi2023AccelGCN,
   title={Accel-GCN: High-Performance GPU Accelerator Design for Graph Convolution Networks},
-  author={Xie, Xi and Peng, Hongwu and others},
+  author={Xie, Xi and Peng, Hongwu and Hasan, Amit and Huang, Shaoyi and Zhao, Jiahui and Fang, Haowen and Zhang, Wei and Geng, Tong and Khan, Omer and Ding, Caiwen},
   booktitle={Proceedings of the 42st IEEE/ACM International Conference on Computer-Aided Design},
   year={2023}
 }
