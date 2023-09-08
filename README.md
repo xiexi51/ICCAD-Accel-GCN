@@ -1,6 +1,6 @@
-# ICCAD-Accel-GNN
+# ICCAD-Accel-GCN
 
-Official Implementation of "Accel-GNN: High-Performance GPU Accelerator Design for Graph Neural Networks"
+Official Implementation of "Accel-GCN: High-Performance GPU Accelerator Design for Graph Neural Networks"
 
 Please cite our paper if you use the code ✔
 ```
