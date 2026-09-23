@@ -1,8 +1,14 @@
-cmake_minimum_required(VERSION 3.5)
-project (spmm_test C CXX CUDA)
-set(CMAKE_CUDA_ARCHITECTURES 86)
+cmake_minimum_required(VERSION 3.18)
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    set(CMAKE_CUDA_ARCHITECTURES 86)
+endif()
+project(spmm_test LANGUAGES CXX CUDA)
 set(CMAKE_CXX_STANDARD 17)
-
-add_executable(${PROJECT_NAME} main.cu spmm_accel.cu spmm_cusparse.cu spmm_gnna.cu)
-
-target_link_libraries(${PROJECT_NAME}  cusparse)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+find_package(CUDAToolkit REQUIRED)
+add_executable(spmm_test main.cu spmm_accel.cu
+    cuda_preprocess/preprocess.cu cuda_preprocess/cusparse_reference.cu)
+target_link_libraries(spmm_test PRIVATE CUDA::cusparse)
+target_compile_options(spmm_test PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-O3>)
