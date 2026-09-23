@@ -1,0 +1,305 @@
+{
+  "graph": "collab",
+  "n": 235868,
+  "nnz": 2358104,
+  "cols": 128,
+  "max_degree": 671,
+  "gpu": "NVIDIA RTX A6000",
+  "visible_devices": "2",
+  "dtype": "float32",
+  "edge_values": "ones, explicitly loaded",
+  "cusparse_version": 12100,
+  "cusparse_algorithm": "CUSPARSE_SPMM_ALG_DEFAULT",
+  "blocks": 21741,
+  "metadata_matches_python_reference_and_shipped_file": true,
+  "mapping_no_edge_allocation": true,
+  "max_abs_errors": {
+    "accel_mapping_original_output": 3.0517578125e-05,
+    "accel_mapping_sorted_output": 3.814697265625e-05,
+    "accel_physical_sorted_output": 3.4332275390625e-05,
+    "cusparse_original": 2.288818359375e-05,
+    "cusparse_sorted": 3.814697265625e-05
+  },
+  "all_variants_validated": true,
+  "input_sha256": {
+    "collab.graph.ptrdump": "6cfd7b6597fa73656cb178bc5d2f0248906d989695ddd3fcfa7d5f03a1bfcb99",
+    "collab.graph.edgedump": "eea7138a5d3d7ff315d784d12a9f341124699906f91ad24bbdc9fc779404393e"
+  },
+  "preprocessing": {
+    "mapping_only_gpu": {
+      "median_ms": 0.09591808319091796,
+      "min_ms": 0.09589759826660156,
+      "max_ms": 0.1024396800994873,
+      "samples_ms": [
+        0.1024396800994873,
+        0.09589759826660156,
+        0.09589759826660156,
+        0.09590784072875977,
+        0.09595904350280762,
+        0.09595904350280762,
+        0.09591808319091796
+      ]
+    },
+    "mapping_only_wall": {
+      "median_ms": 0.11012399772880599,
+      "min_ms": 0.1094679901143536,
+      "max_ms": 0.12241200602147728,
+      "samples_ms": [
+        0.12241200602147728,
+        0.11172199447173625,
+        0.11012899631168693,
+        0.1094679901143536,
+        0.10975899931509048,
+        0.10995900083798915,
+        0.10965899855364114,
+        0.1222729915753007,
+        0.11114199878647923,
+        0.11011899914592505
+      ]
+    },
+    "mapping_plus_host_count_wall": {
+      "median_ms": 0.12767750013154,
+      "min_ms": 0.12506700295489281,
+      "max_ms": 0.13473600847646594,
+      "samples_ms": [
+        0.13473600847646594,
+        0.13104001118335873,
+        0.12818399409297854,
+        0.1292060042032972,
+        0.12736200005747378,
+        0.12625999806914479,
+        0.12799300020560622,
+        0.12629000411834568,
+        0.12506700295489281,
+        0.12712200987152755
+      ]
+    }
+  },
+  "spmm": {
+    "accel_mapping_original_output": {
+      "median_ms": 1.515141143798828,
+      "min_ms": 1.5130335998535156,
+      "max_ms": 1.51555908203125,
+      "samples_ms": [
+        1.5130335998535156,
+        1.5133900451660156,
+        1.51446533203125,
+        1.5148243713378906,
+        1.5145677185058595,
+        1.515141143798828,
+        1.5146803283691406,
+        1.515509796142578,
+        1.513738250732422,
+        1.515458526611328,
+        1.5152639770507812,
+        1.5155506896972657,
+        1.5152963256835938,
+        1.51555908203125,
+        1.5153152465820312
+      ]
+    },
+    "accel_mapping_sorted_output": {
+      "median_ms": 1.508116455078125,
+      "min_ms": 1.5075840759277344,
+      "max_ms": 1.509232635498047,
+      "samples_ms": [
+        1.5080242919921876,
+        1.5077682495117188,
+        1.5077273559570312,
+        1.5075840759277344,
+        1.5082086181640626,
+        1.5088946533203125,
+        1.5081062316894531,
+        1.5080345153808594,
+        1.5076864624023438,
+        1.508116455078125,
+        1.5085772705078124,
+        1.5085568237304687,
+        1.5085261535644532,
+        1.5084025573730468,
+        1.509232635498047
+      ]
+    },
+    "accel_physical_sorted_output": {
+      "median_ms": 1.4558412170410155,
+      "min_ms": 1.455431671142578,
+      "max_ms": 1.4563095092773437,
+      "samples_ms": [
+        1.455431671142578,
+        1.4556877136230468,
+        1.4555033874511718,
+        1.4557600402832032,
+        1.4558493041992187,
+        1.4562098693847656,
+        1.4556364440917968,
+        1.4556466674804687,
+        1.4555238342285157,
+        1.4563095092773437,
+        1.4558412170410155,
+        1.4561074829101563,
+        1.4559834289550782,
+        1.4558720397949219,
+        1.4561369323730469
+      ]
+    },
+    "cusparse_original": {
+      "median_ms": 1.8193919372558593,
+      "min_ms": 1.8188800048828124,
+      "max_ms": 1.8201087951660155,
+      "samples_ms": [
+        1.8192691040039062,
+        1.8188800048828124,
+        1.8190538024902343,
+        1.819463653564453,
+        1.8194329833984375,
+        1.8194125366210938,
+        1.8195478820800781,
+        1.8198220825195313,
+        1.8192691040039062,
+        1.8193919372558593,
+        1.8201087951660155,
+        1.8192774963378906,
+        1.8190028381347656,
+        1.8192282104492188,
+        1.8194744873046875
+      ]
+    },
+    "cusparse_sorted": {
+      "median_ms": 1.6153395080566406,
+      "min_ms": 1.614571533203125,
+      "max_ms": 1.6165887451171874,
+      "samples_ms": [
+        1.6157696533203125,
+        1.6148979187011718,
+        1.6153395080566406,
+        1.614808349609375,
+        1.6153497314453125,
+        1.6165068054199219,
+        1.6165887451171874,
+        1.6163737487792968,
+        1.614571533203125,
+        1.6151040649414063,
+        1.6153485107421874,
+        1.615851593017578,
+        1.6149311828613282,
+        1.6151231384277345,
+        1.6150732421875
+      ]
+    }
+  },
+  "measurement": {
+    "warmup_per_variant": 20,
+    "sample_groups": 15,
+    "calls_per_group": 100,
+    "orders": [
+      [
+        "accel_mapping_original_output",
+        "accel_physical_sorted_output",
+        "accel_mapping_sorted_output",
+        "cusparse_sorted",
+        "cusparse_original"
+      ],
+      [
+        "cusparse_original",
+        "accel_physical_sorted_output",
+        "accel_mapping_sorted_output",
+        "cusparse_sorted",
+        "accel_mapping_original_output"
+      ],
+      [
+        "cusparse_original",
+        "accel_physical_sorted_output",
+        "accel_mapping_sorted_output",
+        "cusparse_sorted",
+        "accel_mapping_original_output"
+      ],
+      [
+        "accel_mapping_sorted_output",
+        "cusparse_original",
+        "cusparse_sorted",
+        "accel_physical_sorted_output",
+        "accel_mapping_original_output"
+      ],
+      [
+        "accel_mapping_original_output",
+        "cusparse_original",
+        "accel_physical_sorted_output",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "accel_mapping_original_output",
+        "accel_mapping_sorted_output",
+        "cusparse_original",
+        "cusparse_sorted"
+      ],
+      [
+        "cusparse_original",
+        "accel_physical_sorted_output",
+        "accel_mapping_sorted_output",
+        "accel_mapping_original_output",
+        "cusparse_sorted"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "accel_mapping_original_output",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output",
+        "cusparse_original"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "cusparse_sorted",
+        "accel_mapping_original_output",
+        "cusparse_original",
+        "accel_mapping_sorted_output"
+      ],
+      [
+        "cusparse_original",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output",
+        "accel_mapping_original_output",
+        "accel_physical_sorted_output"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "cusparse_sorted",
+        "accel_mapping_original_output",
+        "cusparse_original",
+        "accel_mapping_sorted_output"
+      ],
+      [
+        "accel_mapping_sorted_output",
+        "accel_mapping_original_output",
+        "accel_physical_sorted_output",
+        "cusparse_sorted",
+        "cusparse_original"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "accel_mapping_original_output",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output",
+        "cusparse_original"
+      ],
+      [
+        "accel_physical_sorted_output",
+        "accel_mapping_original_output",
+        "cusparse_original",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output"
+      ],
+      [
+        "accel_mapping_original_output",
+        "cusparse_original",
+        "cusparse_sorted",
+        "accel_mapping_sorted_output",
+        "accel_physical_sorted_output"
+      ]
+    ],
+    "output_zero_in_accel": true,
+    "input_output_resident": true,
+    "excludes": "allocation, I/O, H2D, CSR materialization"
+  }
+}

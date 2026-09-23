@@ -25,6 +25,28 @@ The following SPMM kernels are benchmarked here:
 `spmm_cusparse.cu`  The [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/index.html) SPMM functionality.
 
 
+## CUDA preprocessing and mapping-only SpMM
+
+The [CUDA preprocessing implementation](cuda_preprocess/README.md) generates
+the row permutation, virtual sorted CSR row offsets, and block metadata directly
+on the GPU. Mapping-only mode keeps the original edge indices and weights in
+place. The matching SpMM kernel resolves each row through the mapping and can
+write results directly in the original node order.
+
+```bash
+# Requires CUDA/CUB, cuSPARSE, and Python with PyTorch, NumPy, and SciPy.
+# Override NVCC if CUDA is installed elsewhere (default: CUDA 12.2, sm_86).
+bash cuda_preprocess/build.sh
+CUDA_VISIBLE_DEVICES=2 python cuda_preprocess/validate.py
+
+# Fetch the original CSR and benchmark preprocessing plus SpMM.
+python cuda_preprocess/fetch_graph.py collab
+CUDA_VISIBLE_DEVICES=2 python cuda_preprocess/graph_benchmark.py --graph collab --cols 128
+```
+
+See the [mapping-only API and validation details](cuda_preprocess/README.md)
+and [recorded mapping comparison](cuda_preprocess/MAPPING_RESULTS.md).
+
 ## Get started
 
 ### Prerequisites

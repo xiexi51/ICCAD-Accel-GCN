@@ -1,0 +1,110 @@
+{
+  "OVCAR-8H": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 157464,
+    "sha256_block4": "b1fb6574d90630cee5c05b1176385fba836501454e79d750e0407f0fa967ecab"
+  },
+  "SW-620H": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 157385,
+    "sha256_block4": "37480ca1a419251eb3a8cee40e5322a4976e24d345f47c008f7768b245415334"
+  },
+  "TWITTER-Real-Graph-Partial": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 48402,
+    "sha256_block4": "d8a4da5673c9933d4690f8232c569ba702725240c9fdbe1bd118a4950dd3a42a"
+  },
+  "Yeast": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 142578,
+    "sha256_block4": "c2b1e00c18cc0fe4a83caad148bc8e7d8aaa2e020a5a30e52841276343721eed"
+  },
+  "am": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 79178,
+    "sha256_block4": "2aa3e1f980ab9f7ed70aca175e8404a0db24781c9493726d0f800be05926474d"
+  },
+  "amazon0601": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 38682,
+    "sha256_block4": "ad29422b9eb888c066d7856c17a38b905b7c5969cb604fd8c9c5a5bcebb2bf8b"
+  },
+  "artist": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 7485,
+    "sha256_block4": "1a6cd9d3f0d4a33369a496b8396b3be7502e308ea25628163a876fca936ff03d"
+  },
+  "arxiv": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 10782,
+    "sha256_block4": "b9494c2fc483bae9ecc9c727cfa9765f7f48d8320592cf8e032b009ba7d432cd"
+  },
+  "citation": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 251693,
+    "sha256_block4": "a97a9a9a8f67f22bff5a05739d1fd609156c74568d92b6ec3a6184ba5410f820"
+  },
+  "collab": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 21741,
+    "sha256_block4": "4261e3e29d050cac27ae49ad262f90f908f19d74bc0a915e94527828b65dc41d"
+  },
+  "com-amazon": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 28183,
+    "sha256_block4": "ba9827e26f66372a351c16ed9956868c42b1ed7418de699622169776bba3a145"
+  },
+  "ppa": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 154341,
+    "sha256_block4": "ac1dbe89718872131a21e0bd0ec508c53d8aefa6c673b70fa19ef4aca065a1ba"
+  },
+  "products": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 478232,
+    "sha256_block4": "e4d5a86d4d955461db9b5965cf2e43446e33348e1106d8ac096c837190397e5e"
+  },
+  "pubmed": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 1716,
+    "sha256_block4": "79854e1c4510f4da5dc786880f1d345e0d2076c8c628af06e4104b92a8c025d9"
+  },
+  "reddit.dgl": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 363632,
+    "sha256_block4": "6396bf7741f8b7a1a129c2f09185bad4aaee6f27e96ebe5adc5a2b19c8713fb7"
+  },
+  "wikikg2": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 208513,
+    "sha256_block4": "9c1c1229d5bef646504f2d6df826b990ecbd407046553ae0d62776aae0536438"
+  },
+  "yelp": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 83558,
+    "sha256_block4": "4adc032115f4cd634b5aba9cc39b3a23a54122aa38cfb070c6879c24a676d8b6"
+  },
+  "youtube": {
+    "matches_shipped_block4": true,
+    "stable_mapping_verified": true,
+    "blocks": 102118,
+    "sha256_block4": "c6ef2a214d83b41553508a247426ad1099087a2392f2f2b0d48f54534e56a74b"
+  }
+}

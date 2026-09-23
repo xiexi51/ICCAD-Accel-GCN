@@ -1,0 +1,338 @@
+{
+  "gpu": "NVIDIA RTX A6000",
+  "visible_devices": "2",
+  "n": 232965,
+  "nnz": 114615891,
+  "cols": 128,
+  "dtype": "float32",
+  "edge_values": "ones, explicitly loaded in every variant",
+  "comparison": "identical stable permutation, edge loop, block partition, 384 threads and shared memory",
+  "output_zero_included": true,
+  "metadata_exact": true,
+  "mapping_allocates_no_edge_array": true,
+  "avoided_index_copy_mib": 437.22492599487305,
+  "avoided_index_and_weight_copy_mib": 874.4498519897461,
+  "row_mapping_mib": 0.8886909484863281,
+  "virtual_rowptr_mib": 0.8886947631835938,
+  "all_variants_match_cusparse": true,
+  "preprocessing": {
+    "mapping_only_gpu": {
+      "median_ms": 0.11428863525390626,
+      "min_ms": 0.1136128044128418,
+      "max_ms": 0.11833279609680175,
+      "samples_ms": [
+        0.11833279609680175,
+        0.11667455673217773,
+        0.11488448143005371,
+        0.11428863525390626,
+        0.11364352226257324,
+        0.11395071983337403,
+        0.1136128044128418
+      ]
+    },
+    "mapping_only_wall": {
+      "median_ms": 0.12881000293418765,
+      "min_ms": 0.12620000052265823,
+      "max_ms": 0.14512600318994373,
+      "samples_ms": [
+        0.14512600318994373,
+        0.1314999972237274,
+        0.12738199438899755,
+        0.13429499813355505,
+        0.12738200894091278,
+        0.13088900595903397,
+        0.12620000052265823,
+        0.127192004583776,
+        0.12824400619138032,
+        0.12937599967699498
+      ]
+    },
+    "mapping_only_wall_with_host_count": {
+      "median_ms": 0.14506999286822975,
+      "min_ms": 0.13903400395065546,
+      "max_ms": 0.1564570120535791,
+      "samples_ms": [
+        0.1564570120535791,
+        0.1456259924452752,
+        0.15050600632093847,
+        0.14238100266084075,
+        0.1445139932911843,
+        0.15312100003939122,
+        0.14219000877346843,
+        0.14047700096853077,
+        0.13903400395065546,
+        0.14833200839348137
+      ]
+    },
+    "physical_indices_gpu": {
+      "median_ms": 1.8951168060302734,
+      "min_ms": 1.8932735443115234,
+      "max_ms": 1.8966688156127929,
+      "samples_ms": [
+        1.8956031799316406,
+        1.8966688156127929,
+        1.8937759399414062,
+        1.8947999954223633,
+        1.895903968811035,
+        1.8932735443115234,
+        1.8951168060302734
+      ]
+    },
+    "physical_indices_and_weights_gpu": {
+      "median_ms": 3.885977554321289,
+      "min_ms": 3.882700729370117,
+      "max_ms": 3.888332748413086,
+      "samples_ms": [
+        3.8834049224853517,
+        3.885977554321289,
+        3.888332748413086,
+        3.885977554321289,
+        3.888118362426758,
+        3.8865726470947264,
+        3.882700729370117
+      ]
+    }
+  },
+  "spmm": {
+    "physical_sorted": {
+      "median_ms": 68.32639770507812,
+      "min_ms": 68.32210083007813,
+      "max_ms": 68.33253784179688,
+      "samples_ms": [
+        68.33172607421875,
+        68.32660522460938,
+        68.32394409179688,
+        68.32578735351562,
+        68.32384033203125,
+        68.32639770507812,
+        68.32435302734375,
+        68.33253784179688,
+        68.33223876953124,
+        68.32210083007813,
+        68.32926635742187,
+        68.32578735351562,
+        68.3254638671875,
+        68.326806640625,
+        68.32947387695313
+      ]
+    },
+    "mapping_sorted": {
+      "median_ms": 68.33141479492187,
+      "min_ms": 68.32394409179688,
+      "max_ms": 68.33909912109375,
+      "samples_ms": [
+        68.32814331054688,
+        68.32965698242188,
+        68.33715209960937,
+        68.33141479492187,
+        68.33273315429688,
+        68.335205078125,
+        68.33909912109375,
+        68.326708984375,
+        68.33090209960938,
+        68.32824096679687,
+        68.32394409179688,
+        68.33336181640625,
+        68.33848266601562,
+        68.32967529296874,
+        68.33428344726562
+      ]
+    },
+    "identity_mapping_sorted": {
+      "median_ms": 68.2603515625,
+      "min_ms": 68.25482177734375,
+      "max_ms": 68.26864624023438,
+      "samples_ms": [
+        68.25532836914063,
+        68.25809936523437,
+        68.25758666992188,
+        68.2603515625,
+        68.261376953125,
+        68.26229858398438,
+        68.25994262695312,
+        68.26383056640626,
+        68.26688842773437,
+        68.25646362304687,
+        68.26362915039063,
+        68.25482177734375,
+        68.25758666992188,
+        68.2625,
+        68.26864624023438
+      ]
+    },
+    "mapping_original": {
+      "median_ms": 68.43576049804688,
+      "min_ms": 68.42695922851563,
+      "max_ms": 68.44139404296875,
+      "samples_ms": [
+        68.44139404296875,
+        68.43504638671875,
+        68.42695922851563,
+        68.43832397460938,
+        68.44016723632812,
+        68.43709716796874,
+        68.43361206054688,
+        68.43576049804688,
+        68.43123779296874,
+        68.43434448242188,
+        68.43801879882812,
+        68.4379150390625,
+        68.43013305664063,
+        68.4327880859375,
+        68.43832397460938
+      ]
+    },
+    "physical_plus_gather": {
+      "median_ms": 68.73087768554687,
+      "min_ms": 68.72176513671874,
+      "max_ms": 68.73579711914063,
+      "samples_ms": [
+        68.72719116210938,
+        68.73220825195312,
+        68.72913818359375,
+        68.72176513671874,
+        68.72658081054688,
+        68.7320068359375,
+        68.73087768554687,
+        68.72852783203125,
+        68.73333740234375,
+        68.73159790039062,
+        68.73220825195312,
+        68.73579711914063,
+        68.72761840820313,
+        68.72658081054688,
+        68.7309814453125
+      ]
+    }
+  },
+  "sample_orders": [
+    [
+      "physical_plus_gather",
+      "mapping_sorted",
+      "physical_sorted",
+      "mapping_original",
+      "identity_mapping_sorted"
+    ],
+    [
+      "identity_mapping_sorted",
+      "physical_sorted",
+      "mapping_sorted",
+      "mapping_original",
+      "physical_plus_gather"
+    ],
+    [
+      "physical_sorted",
+      "identity_mapping_sorted",
+      "mapping_sorted",
+      "mapping_original",
+      "physical_plus_gather"
+    ],
+    [
+      "identity_mapping_sorted",
+      "physical_plus_gather",
+      "physical_sorted",
+      "mapping_sorted",
+      "mapping_original"
+    ],
+    [
+      "physical_plus_gather",
+      "identity_mapping_sorted",
+      "mapping_sorted",
+      "physical_sorted",
+      "mapping_original"
+    ],
+    [
+      "physical_plus_gather",
+      "identity_mapping_sorted",
+      "mapping_original",
+      "physical_sorted",
+      "mapping_sorted"
+    ],
+    [
+      "physical_sorted",
+      "mapping_sorted",
+      "physical_plus_gather",
+      "mapping_original",
+      "identity_mapping_sorted"
+    ],
+    [
+      "physical_plus_gather",
+      "mapping_original",
+      "mapping_sorted",
+      "identity_mapping_sorted",
+      "physical_sorted"
+    ],
+    [
+      "physical_plus_gather",
+      "identity_mapping_sorted",
+      "physical_sorted",
+      "mapping_original",
+      "mapping_sorted"
+    ],
+    [
+      "physical_sorted",
+      "physical_plus_gather",
+      "mapping_original",
+      "mapping_sorted",
+      "identity_mapping_sorted"
+    ],
+    [
+      "mapping_original",
+      "identity_mapping_sorted",
+      "mapping_sorted",
+      "physical_sorted",
+      "physical_plus_gather"
+    ],
+    [
+      "mapping_sorted",
+      "physical_plus_gather",
+      "physical_sorted",
+      "identity_mapping_sorted",
+      "mapping_original"
+    ],
+    [
+      "physical_plus_gather",
+      "identity_mapping_sorted",
+      "mapping_original",
+      "mapping_sorted",
+      "physical_sorted"
+    ],
+    [
+      "mapping_original",
+      "physical_plus_gather",
+      "mapping_sorted",
+      "identity_mapping_sorted",
+      "physical_sorted"
+    ],
+    [
+      "identity_mapping_sorted",
+      "mapping_sorted",
+      "mapping_original",
+      "physical_sorted",
+      "physical_plus_gather"
+    ]
+  ],
+  "repeats_per_sample": 10,
+  "paired_mapping_penalty_percent": {
+    "median": 0.00823618962066952,
+    "min": -0.008530134553719204,
+    "max": 0.021582485741356017,
+    "samples": [
+      -0.005243192112525108,
+      0.004466426807625545,
+      0.01933144813002219,
+      0.00823618962066952,
+      0.013015694408280432,
+      0.012890146916411105,
+      0.021582485741356017,
+      -0.008530134553719204,
+      -0.0019561336580542488,
+      0.008987043202912659,
+      -0.007789144986802832,
+      0.011085804033905688,
+      0.019054095049297892,
+      0.004198428822865807,
+      0.00703879312922151
+    ]
+  }
+}

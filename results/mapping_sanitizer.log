@@ -1,0 +1,3 @@
+========= COMPUTE-SANITIZER
+{"cases_passed": 13, "metadata_exact": true, "stable_reorder_exact": true, "mapping_only_exact": true, "mapped_spmm_sorted_and_original_output": true, "spmm_widths": [32, 41, 128]}
+========= ERROR SUMMARY: 0 errors
