@@ -16,9 +16,7 @@ Please cite our paper if you use the code ✔
 ## CUDA preprocessing and mapped SpMM
 
 The native benchmark generates Accel-GCN metadata directly with CUDA kernels,
-then runs Accel-GCN and cuSPARSE on the original CSR. Only the row mapping,
-virtual row offsets, and block metadata are generated: **edge indices and
-weights are not reordered or copied**.
+then runs Accel-GCN and cuSPARSE on the original CSR.
 
 See [CUDA preprocessing and cache details](cuda_preprocess/README.md).
 
@@ -51,18 +49,18 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
 cmake --build build -j
 ```
 
-### Run on GPU 2
+### Run
 
 From the repository root, regenerate metadata with CUDA on each invocation:
 
 ```bash
-CUDA_VISIBLE_DEVICES=2 ./build/spmm_test collab 128 --graphs-dir graphs
+./build/spmm_test collab 128 --graphs-dir graphs
 ```
 
 Or generate once and reuse metadata from a cache directory:
 
 ```bash
-CUDA_VISIBLE_DEVICES=2 ./build/spmm_test collab 128 --graphs-dir graphs \
+./build/spmm_test collab 128 --graphs-dir graphs \
   --metadata-cache metadata_cache
 ```
 
@@ -74,7 +72,7 @@ Only `GRAPH.graph.ptrdump` and `GRAPH.graph.edgedump` are required; existing
 Run all graphs at 128 columns:
 
 ```bash
-CUDA_VISIBLE_DEVICES=2 ./build/spmm_test --graphs-dir graphs --cols 128 \
+./build/spmm_test --graphs-dir graphs --cols 128 \
   --metadata-cache metadata_cache
 ```
 
@@ -87,16 +85,3 @@ See `./build/spmm_test --help` for timing and validation options.
 
 Cache integration tests are retained on
 [`test/cuda-preprocessing`](https://github.com/xiexi51/ICCAD-Accel-GCN/tree/test/cuda-preprocessing).
-
-## Kernel design of Accel-GCN
-
-The SPMM kernel of Accel-GCN incorporates block-level partitioning and a combined warp strategy for traversing the right-hand matrix column dimension. 
-This approach exploits multi-level memory efficiency, memory coalescing, and alignment, which further optimizes execution efficiency.
-
-![architecture](images/block_vs_warp6.png)
-
-### Speedups over other SPMM kernels
-
-On average, evaluation of Accel-GCN across 18 benchmark graphs demonstrates that Accel-GCN surpasses cuSPARSE, GNNAdvisor, and graph-BLAST by 17.3%, 86.3%, and 193.5% respectively.
-
-![speedup](images/normalized_speed_amit.png)
