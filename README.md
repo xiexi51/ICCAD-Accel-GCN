@@ -13,51 +13,21 @@ Please cite our paper if you use the code ✔
 ```
 
 
-## Abstract
-This code contains a lightweight framework for benchmarking SPMM kernel designs.
+## CUDA preprocessing and mapped SpMM
 
-The following SPMM kernels are benchmarked here:
+The native benchmark generates Accel-GCN metadata directly with CUDA kernels,
+then runs Accel-GCN and cuSPARSE on the original CSR. Only the row mapping,
+virtual row offsets, and block metadata are generated: **edge indices and
+weights are not reordered or copied**.
 
-`spmm_accel.cu`  The implementation of our Accel-GCN's SPMM kernel design.
-
-`spmm_gnna.cu`  The SPMM kernel of [GNNAdvisor](https://github.com/YukeWang96/GNNAdvisor_OSDI21).
-
-`spmm_cusparse.cu`  The [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/index.html) SPMM functionality.
-
-
-## CUDA preprocessing and mapping-only SpMM
-
-The [CUDA preprocessing implementation](cuda_preprocess/README.md) generates
-the row permutation, virtual sorted CSR row offsets, and block metadata directly
-on the GPU. Mapping-only mode keeps the original edge indices and weights in
-place. The matching SpMM kernel resolves each row through the mapping and can
-write results directly in the original node order.
-
-```bash
-# Requires CUDA/CUB, cuSPARSE, and Python with PyTorch, NumPy, and SciPy.
-# Override NVCC if CUDA is installed elsewhere (default: CUDA 12.2, sm_86).
-bash cuda_preprocess/build.sh
-CUDA_VISIBLE_DEVICES=2 python cuda_preprocess/validate.py
-
-# Fetch the original CSR and benchmark preprocessing plus SpMM.
-python cuda_preprocess/fetch_graph.py collab
-CUDA_VISIBLE_DEVICES=2 python cuda_preprocess/graph_benchmark.py --graph collab --cols 128
-```
-
-See the [mapping-only API and validation details](cuda_preprocess/README.md)
-and [recorded mapping comparison](cuda_preprocess/MAPPING_RESULTS.md).
+See [CUDA preprocessing and cache details](cuda_preprocess/README.md).
 
 ## Get started
 
-### Prerequisites
-Nvidia GPU with compute capability greater than or equal to 8.6
-
-CUDA toolkit 12.0
-
-cmake version 3.5
-
-For the python scripts, numpy and scipy are required
-
+Requires a CUDA toolkit with CUB and cuSPARSE, CMake 3.18 or newer, and a C++17
+compiler. The default GPU target is compute capability 8.6; override
+`CMAKE_CUDA_ARCHITECTURES` when configuring for another supported GPU.
+Python is not required to build or run the benchmark.
 
 ### Download dataset
 Our benchmark dataset contains 18 graphs:
@@ -73,36 +43,58 @@ Place the downloaded file in the project directory, then unzip it (and rename it
 tar xzvf 18graphs.tar.gz
 mv 18graphs graphs
 ```
-Generate block-level partitioning meta-data.
-```
-mkdir block_level_meta
-python block_level_partition.py
+### Build
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.2/bin/nvcc
+cmake --build build -j
 ```
 
-### Compilation
-```
-mkdir build
-cd build
-cmake ..
-make -j10
-```
-After compilation, an executable file named `spmm_test` is generated.
+### Run on GPU 2
 
-## Benchmarking
-Benchmark SPMM kernels on a specified graph and a specified right-hand matrix column dimension:
+From the repository root, regenerate metadata with CUDA on each invocation:
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ./build/spmm_test collab 128 --graphs-dir graphs
 ```
-./spmm_test artist 60
+
+Or generate once and reuse metadata from a cache directory:
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ./build/spmm_test collab 128 --graphs-dir graphs \
+  --metadata-cache metadata_cache
 ```
-If no parameters are attached, 
-it will execute a traversal-style benchmark for all graphs and all right-multiply matrix column dimensions 
-(controlled by `dim_min`, `dim_max`, and `interval` in `main.cu`):
+
+A cache miss or invalid entry triggers CUDA generation and replaces the entry.
+Use `--metadata-generate` to explicitly select generation without caching.
+Only `GRAPH.graph.ptrdump` and `GRAPH.graph.edgedump` are required; existing
+`.new_indptr`, `.new_indices`, and `.block4` files are not used.
+
+Run all graphs at 128 columns:
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ./build/spmm_test --graphs-dir graphs --cols 128 \
+  --metadata-cache metadata_cache
 ```
-./spmm_test
+
+Without a feature width, the driver sweeps 16–128 columns. Metadata is prepared
+once per graph and reused throughout the sweep. Output includes metadata setup
+wall time and mean SpMM GPU times in milliseconds. Both kernels use 20 warmup
+calls and 100 timed calls by default. Results are checked against cuSPARSE in
+original node order; validation failure returns a nonzero exit status.
+See `./build/spmm_test --help` for timing and validation options.
+
+If Python 3 is available at CMake configuration time, run the integration test:
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ctest --test-dir build --output-on-failure
 ```
-You can use a pipe to save the results: 
-```
-./spmm_test > result.txt
-```
+
+This test checks CUDA generation, cache hits, changed-row invalidation, damaged
+cache recovery, and SpMM outputs. Python only drives the native executable.
+The experimental Python interface and detailed benchmark artifacts remain on
+[`test/cuda-preprocessing`](https://github.com/xiexi51/ICCAD-Accel-GCN/tree/test/cuda-preprocessing).
 
 ## Kernel design of Accel-GCN
 

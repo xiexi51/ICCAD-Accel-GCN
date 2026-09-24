@@ -1,3 +1,0 @@
-========= COMPUTE-SANITIZER
-{"cases_passed": 13, "metadata_exact": true, "stable_reorder_exact": true, "spmm_widths": [32, 41, 128]}
-========= ERROR SUMMARY: 0 errors

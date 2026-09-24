@@ -1,153 +1,69 @@
 # CUDA preprocessing
 
-CUDA preprocessing for ICCAD-Accel-GCN, preserving the original Python script
-and SpMM kernel. Measurements are summarized in [RESULTS.md](RESULTS.md), with
-raw samples in [../results](../results).
+`main.cu` calls the CUDA implementation directly. No Python runtime, CPU
+preprocessing implementation, or offline metadata generation is required.
+The main benchmark runs mapped Accel-GCN SpMM and cuSPARSE on the original CSR.
+Legacy GNNAdvisor source is retained separately and is not part of this target.
 
-The variant that keeps edge arrays in place and its comparison results are in
-[MAPPING_RESULTS.md](MAPPING_RESULTS.md). Mapping-only preprocessing, Accel,
-and cuSPARSE results for Collab (GPU 2, 128 columns) are in
-[COLLAB_RESULTS.md](COLLAB_RESULTS.md). The same commands support other
-available official graphs:
+## Pipeline
 
-```bash
-PYTHON=/home/xix22010/anaconda3/envs/torch2/bin/python
-"$PYTHON" cuda_preprocess/fetch_graph.py collab
-CUDA_VISIBLE_DEVICES=2 "$PYTHON" cuda_preprocess/graph_benchmark.py --graph collab --cols 128
-```
+1. CUDA kernels calculate row degrees and initialize row IDs.
+2. A stable CUB radix sort produces `perm[sorted_row] = original_row`.
+3. A prefix scan produces virtual degree-sorted CSR row offsets.
+4. Run detection, block counts, a prefix scan, and emission generate `int4`
+   block records `[degree, row_begin, loc_begin, info]`.
 
-```python
-from backend import Preprocessor, spmm_mapped
+Only mapping and scheduling metadata are generated. Edge indices and weights
+remain in their original GPU buffers; there is no reordered edge allocation or
+copy. SpMM resolves the original row outside the neighbor loop and writes the
+output in original node order. Large rows use virtual offsets to locate their
+384-edge segments. Output zeroing is included in each SpMM call.
 
-workspace = Preprocessor(n, nnz, mapping_only=True)  # No nnz-sized output allocation.
-workspace.mapping(original_rowptr)  # Does not read indices or values.
-blocks = workspace.count.item()
-spmm_mapped(workspace.meta, blocks, workspace.perm, original_rowptr,
-            workspace.rowptr, original_indices, original_values, x, out,
-            original_output=True)  # Original node order; False selects degree-sorted order.
-workspace.close()
-```
+Metadata retains the original partition semantics: stable ordering for equal
+degrees, one row per block for degrees 192–384, 384-edge segments above 384,
+and no blocks for zero-degree rows.
 
-Mapping-only mode generates a stable row permutation, virtual sorted rowptr,
-and block4 records matching the original script. Outside the neighbor loop,
-SpMM uses `original_row = perm[sorted_row]` and
-`original_rowptr[original_row]` to locate the original edges. High-degree
-segments additionally use `block_loc - sorted_rowptr[block_row]`. No per-edge
-mapping or edge-index/weight copy is required. Direct original-order output
-writes each row to `original_row`, avoiding a separate inverse-permutation gather.
+## Generation and caching
 
-Reproduce the comparison with identical stable sorting and 15 randomized
-sample groups, each containing 10 calls per variant:
+Default, or `--metadata-generate`: generate metadata with CUDA once per graph
+per executable invocation, and reuse it across feature widths and SpMM calls.
+No metadata file is read or written.
 
-```bash
-CUDA_VISIBLE_DEVICES=2 /home/xix22010/anaconda3/envs/torch2/bin/python \
-  cuda_preprocess/mapping_benchmark.py
-```
+`--metadata-cache DIR`: load `DIR/GRAPH.agmeta` when valid. On a missing,
+outdated, truncated, or checksum-invalid entry, generate on the GPU and save
+it with an atomic rename. The last metadata mode option on the command line
+wins. An inaccessible cache directory is reported as an error.
 
-## Reproduction
+The cache stores the permutation, virtual row offsets, and block records.
+Its header contains a format/algorithm version, node and edge counts, a
+fingerprint of the original row offsets, the block count, payload size, and a
+payload checksum. Changed row offsets invalidate the entry. Column IDs and
+weights do not affect this metadata and are not cached. Cache files use native
+little-endian int32/uint64 data; they are local generated artifacts, not a
+portable or untrusted interchange format.
 
-The recorded experiments use an existing local environment without installing
-dependencies. All CUDA experiments use physical GPU 2, visible as `cuda:0`
-inside the process.
+`metadata_setup_ms` is single-run wall time, including workspace allocation,
+CUDA work and synchronization; cache mode also includes fingerprinting and
+file transfers. It excludes the common CSR input upload and metadata output
+buffer allocation. First-use CUDA module initialization can affect this time.
+It is not the warmed preprocessing microbenchmark reported on the test branch.
 
-```bash
-cd /home/xix22010/py_projects3/accel_gcn
-export CUDA_VISIBLE_DEVICES=2
-PYTHON=/home/xix22010/anaconda3/envs/torch2/bin/python
+`accel_ms` and `cusparse_ms` are mean CUDA event times after 20 warmup calls,
+using 100 timed calls by default. Override with `--warmup` and `--iterations`.
+Metadata setup, descriptor construction, allocations and validation are outside
+the SpMM interval. Accel-GCN includes required output zeroing; cuSPARSE uses
+`beta=0`. Both operate on FP32 features and unit edge weights in this driver.
 
-# Reddit from the official 18graphs.tar.gz is already in graphs/.
-# If missing, run: bash cuda_preprocess/prepare_data.sh
-bash cuda_preprocess/build.sh
-"$PYTHON" cuda_preprocess/validate.py
-"$PYTHON" cuda_preprocess/benchmark.py
-"$PYTHON" cuda_preprocess/extra_timings.py
-"$PYTHON" cuda_preprocess/training.py --epochs 20
-"$PYTHON" cuda_preprocess/report.py
+## Native interface and constraints
 
-# Optional CUDA memory checking.
-/usr/local/cuda-12.2/bin/compute-sanitizer --tool memcheck --error-exitcode 1 \
-  "$PYTHON" cuda_preprocess/validate.py
-```
+`preprocess.h` declares the CUDA C interface. `ag_create` allocates a reusable
+workspace; `ag_mapping` builds the mapping and virtual row offsets;
+`ag_partition` builds block metadata. Calls enqueue on the supplied stream.
+The caller obtains the block count with a device-to-host copy before SpMM.
+Do not share a workspace between concurrent streams or destroy it before work
+completes. `metadata.h` provides the executable's ownership and cache handling.
 
-Compilation requires C++17, CUDA/CUB, and cuSPARSE; defaults are nvcc 12.2 and
-sm_86. Python handles allocation, dispatch, validation, and timing. Sorting,
-scans, CSR materialization, and metadata generation execute in CUDA/CUB.
-`backend.py` calls the shared library through ctypes, without a compiled PyTorch
-extension. C++ callers can use [preprocess.h](preprocess.h) directly.
-
-## Outputs and algorithms
-
-`Preprocessor.partition(rowptr)` matches the computational portion of the
-original `block_level_partition.py`. Input is the GPU int32 array corresponding
-to `.new_indptr`; edge indices, SciPy CSR construction, and unit-weight arrays
-are unnecessary. Output is a GPU int32 array of shape `[capacity, 4]` containing
-`degree, row_begin, loc_begin, info`; GPU `count[0]` holds the valid length.
-
-The algorithm marks consecutive equal-degree runs, computes their start indices
-with prefix-max, counts blocks per row, obtains output offsets with an exclusive
-sum, and emits int4 records in parallel. Zero-degree rows emit no blocks;
-degrees above 384 are split into 384-edge segments. **Degrees 192–384 use
-`warp_nz=32, block_rows=1`**, matching the original table ending at degree 191.
-
-`Preprocessor.full(rowptr, indices, values, out_values)` also computes degrees,
-uses CUB stable radix sorting for the permutation, scans new row offsets, copies
-edge indices and optional FP32 weights row by row, and generates metadata.
-Only rows are reordered; column IDs are unchanged, with
-`perm[new_row] = original_row`. Outputs are `rowptr, indices, perm, meta, count`.
-Materializing full CSR accesses edges and therefore costs O(N+E), not only O(N).
-
-```python
-from backend import Preprocessor
-
-# ptr/idx: contiguous CUDA int32. Offsets and nnz must fit int32.
-workspace = Preprocessor(ptr.numel() - 1, idx.numel())
-meta, device_count = workspace.partition(ptr)
-blocks = device_count.item()  # Synchronize if the launch grid is needed on CPU.
-# meta[:blocks] can be passed directly to Accel-GCN without writing a .block4 file.
-workspace.close()
-```
-
-Calls enqueue on PyTorch's current stream. The hot path performs no allocations
-or CPU synchronization. Keep the workspace alive until GPU operations complete;
-do not reuse it concurrently across streams. Repeated calls overwrite previous
-outputs. C API callers must ensure sufficient capacity, correct dtypes, valid
-CSR, and non-overlapping inputs/outputs.
-
-The original repository does not provide the sorting script that produced
-`.new_indices`. The new full mode uses stable sorting as described in the paper.
-Its edge ordering is **not byte-identical to the downloaded `.new_indices`**,
-but `.new_indptr` and `.block4` are identical. Each row has been checked against
-the corresponding stable permutation of original CSR. Training restores node
-order with an inverse permutation after SpMM and uses an explicit transpose
-for backward, preserving mathematical semantics.
-
-## Validation and timing conventions
-
-- Reddit metadata matches both the unmodified Python script's output and the
-  shipped file, element by element in int32.
-- Thirteen test cases cover empty graphs, all-zero degrees, partial groups,
-  strategy boundaries, high degrees, unsorted inputs, and degree ties. They
-  validate full sorting and SpMM with 32/41/128 columns.
-- Every Reddit SpMM output element is compared with cuSPARSE. Training forward
-  and transposed backward are also validated element by element.
-- CUDA event times use five warmups and the median of seven groups. Each group
-  contains 100 metadata calls, 10 full preprocessing calls, or 20 SpMM calls.
-- Single-call wall time includes host launch and synchronization. H2D uses
-  pageable CPU memory and preallocated GPU buffers. Disk I/O is excluded.
-- The original SpMM uses atomicAdd; the wrapper clears output before every call,
-  and this cost is included in SpMM timing.
-- Training uses real Reddit topology, synthetic features/labels, standard
-  self-loops and symmetric degree normalization, two layers (602→128→41), ReLU,
-  dropout 0.5, Adam, FP32, and disabled TF32. Five warmup epochs precede 20 measured
-  epochs. The 300-epoch time is a linear extrapolation, not an accuracy or
-  convergence experiment.
-- The original graph has two asymmetric entries; Aᵀ is explicitly constructed
-  for backward. Training time includes four SpMM calls (128, 41, 41, 128 columns),
-  dense GEMM, nonlinearities, loss, gradients, Adam, and node-order restoration.
-  Graph construction, normalization, transpose construction, validation, and
-  checkpoints are excluded.
-
-Data source: [original README](https://github.com/xiexi51/ICCAD-Accel-GCN).
-Algorithm background: [Accel-GCN paper](https://xiexi51.github.io/assets/pdf/AccelGCN.pdf).
-Based on upstream commit `8c27e74289f1848afddd637bfe7c6a54f6781dcd`.
-File checksums are recorded in `results/data_sha256.txt`.
+CSR indices and offsets must fit int32. The executable checks CSR offsets and
+column bounds; dense element offsets must also fit int32. The default target
+architecture is `sm_86`, configurable through CMake. CUDA/CUB and cuSPARSE are
+required; Python is optional and used only for the cache integration test.
